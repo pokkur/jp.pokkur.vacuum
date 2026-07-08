@@ -1,0 +1,40 @@
+# OS files
+.DS_Store
+Thumbs.db
+
+# Unity generated folders
+Library/
+Temp/
+Obj/
+Logs/
+UserSettings/
+MemoryCaptures/
+Recordings/
+
+# Unity generated files
+*.csproj
+*.sln
+*.suo
+*.user
+*.userprefs
+*.pidb
+*.booproj
+*.svd
+*.pdb
+*.mdb
+sysinfo.txt
+
+# Build and test output
+Build/
+Builds/
+TestResults/
+CoverageReport/
+*.apk
+*.aab
+*.unitypackage
+
+# IDE/editor local state
+.idea/
+.vscode/
+*.swp
+*.tmp

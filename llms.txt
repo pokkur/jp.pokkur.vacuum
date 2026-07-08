@@ -1,0 +1,48 @@
+# Vacuum
+
+> Dependency-free Unity Package Manager package for stylized mesh suction. Add `SuctionAbsorbable` to mesh targets, drive a nozzle with `SuctionSource`, and pull targets into a single point with a deterministic 5-state lifecycle.
+
+This repository is a Unity package, not a full Unity project. Prefer package-root
+files and `Runtime/` sources over parent-project files when answering questions.
+The package has no runtime dependencies beyond `UnityEngine`.
+
+## Primary Docs
+
+- [English README](README.md): Full package overview, setup, acquisition modes, source lifecycle, external target adoption, samples, and tests.
+- [Japanese README](README.ja.md): Japanese package guide with the same operational information as the English README.
+- [Package Manager docs](Documentation~/index.md): Short local documentation intended for Unity Package Manager.
+- [Package Manager docs Japanese](Documentation~/index.ja.md): Japanese local documentation intended for Unity Package Manager.
+- [Animated demo GIF](Documentation~/media/vacuum-demo.gif): Lightweight Unity capture showing a mesh target being pulled into the nozzle.
+- [Changelog](CHANGELOG.md): Version history and unreleased distribution/documentation changes.
+- [License](LICENSE.md): MIT license.
+
+## Package Metadata
+
+- [package.json](package.json): UPM manifest, version, Unity version, sample declaration, license, keywords, and package description.
+- [Runtime assembly definition](Runtime/Vacuum.Runtime.asmdef): Runtime assembly configuration.
+- [Editor test assembly definition](Tests/Editor/Vacuum.Tests.EditMode.asmdef): EditMode test assembly configuration.
+
+## Runtime API
+
+- [ISuctionTarget](Runtime/ISuctionTarget.cs): Interface for suctionable targets.
+- [SuctionContext](Runtime/SuctionContext.cs): Per-frame nozzle input value object.
+- [SuctionSource](Runtime/SuctionSource.cs): Nozzle-side acquisition, filtering, commit, interruption, and lifecycle driver.
+- [SuctionAbsorbable](Runtime/SuctionAbsorbable.cs): Mesh target component, state machine, deformation, events, VFX hooks, and runtime gates.
+- [SuctionMotionProfile](Runtime/SuctionMotionProfile.cs): Serializable source-owned motion style settings.
+- [SampleSuctionMover](Runtime/SampleSuctionMover.cs): Optional helper for moving sample targets while idle.
+
+## Samples
+
+- [Basic Vacuum setup](Samples~/BasicVacuum/VacuumDemoSetup.cs): Runtime sample scene builder.
+- [Sample nozzle driver](Samples~/BasicVacuum/SampleVacuumNozzle.cs): Minimal legacy Input Manager driver that creates `SuctionContext` each frame.
+- [Sample assembly definition](Samples~/BasicVacuum/Vacuum.Samples.asmdef): Sample assembly configuration.
+
+## Tests
+
+- [SuctionSource tests](Tests/Editor/SuctionSourceTests.cs): Source lifecycle, commit handling, categories, raycast acquisition, occlusion, aim-leave, and concurrency tests.
+- [SuctionAbsorbable tests](Tests/Editor/SuctionAbsorbableTests.cs): Target state transitions, progress, interruption/backflow, minimum duration, and resistance alias tests.
+
+## Optional
+
+- [Unity package layout docs](https://docs.unity3d.com/6000.4/Documentation/Manual/CustomPackages.html): Official Unity documentation for custom packages.
+- [llms.txt proposal](https://llmstxt.org/): Proposed format used by this file.

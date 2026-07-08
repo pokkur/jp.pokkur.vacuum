@@ -1,0 +1,33 @@
+{
+  "name": "jp.pokkur.vacuum",
+  "version": "0.2.1",
+  "displayName": "Vacuum",
+  "description": "Dependency-free generic mesh suction (genie-effect). Tag a mesh with SuctionAbsorbable, drive a nozzle with SuctionSource, and pull objects into a single point with a 5-state lifecycle. Source-centric config: the nozzle owns acquisition (Volume / Raycast), motion profile, shape, max concurrent targets, and optional category filtering. No external package dependencies.",
+  "unity": "6000.4",
+  "license": "MIT",
+  "keywords": [
+    "suction",
+    "vacuum",
+    "vfx",
+    "gameplay",
+    "deform",
+    "genie-effect"
+  ],
+  "author": {
+    "name": "pokkur"
+  },
+  "documentationUrl": "https://github.com/pokkur/jp.pokkur.vacuum#readme",
+  "changelogUrl": "https://github.com/pokkur/jp.pokkur.vacuum/blob/main/CHANGELOG.md",
+  "licensesUrl": "https://github.com/pokkur/jp.pokkur.vacuum/blob/main/LICENSE.md",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/pokkur/jp.pokkur.vacuum.git"
+  },
+  "samples": [
+    {
+      "displayName": "Basic Vacuum Demo",
+      "description": "A nozzle plus varied suctionable targets (some moving, some too strong to absorb).",
+      "path": "Samples~/BasicVacuum"
+    }
+  ]
+}
