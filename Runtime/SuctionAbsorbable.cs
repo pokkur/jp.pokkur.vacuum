@@ -565,6 +565,8 @@ namespace Vacuum
                 // 到達タンジェントをホース方向へ: 制御点をノズル前方 +hoseDirFrame に出す → B'(1) が -hoseDirFrame ⇒ 口へ滑り込む
                 Vector3 hoseLead = nozzlePos + hoseDirFrame * (activeProfile.curveStrength * commitLength);
                 curveCtrl = Vector3.Lerp(chordMid, hoseLead, activeProfile.curveBias);
+                // #7 弧: 制御点を上へ持ち上げると 2 次 Bezier が山なりの放物線になる（端点は不変）。
+                curveCtrl += Vector3.up * (activeProfile.arcLift * commitLength);
             }
 
             // 吸引中だけ震える（#1/#2）。per-object で位相・速さ・軸をばらして lockstep は解消するが、
@@ -615,11 +617,16 @@ namespace Vacuum
                     axialPoint = (iv * iv) * axialStart + (2f * iv * v) * curveCtrl + (v * v) * nozzlePos;
                     if (wantSpiral)
                     {
-                        // Spiral: 中心線を corkscrew。包絡は両端 0（identity/collapse 不変）、tip 寄り偏向可。位相 +90° で sag と視覚分離。
+                        // Spiral: 中心線を corkscrew。包絡は両端 0（identity/collapse 不変）、偏向可。位相 +90° で sag と視覚分離。
+                        // 偏りは正=ノズル寄り（排水口へ締まる）/ 負=根元寄り（大きく渦を巻いてから細い漏斗でノズルへ）。
                         float env = Mathf.Sin(v * Mathf.PI);
                         if (activeProfile.spiralTipBias > 0f)
                         {
                             env *= Mathf.Lerp(1f, v, activeProfile.spiralTipBias);
+                        }
+                        else if (activeProfile.spiralTipBias < 0f)
+                        {
+                            env *= Mathf.Lerp(1f, 1f - v, -activeProfile.spiralTipBias);
                         }
 
                         float radius = activeProfile.spiralRadius * commitLength * env;
@@ -641,14 +648,19 @@ namespace Vacuum
                 float spin01 = Mathf.Pow(a, activeProfile.vortexTimePower) * Mathf.Pow(u0[i], activeProfile.vortexTipPower);
                 float angle = baseAngleRad * spin01;
 
-                // (G) 横倍率 = 収束ゲート × taper(#8) × bulge(#8) × volume(#1) × pinch(#10)
+                // (G) 横倍率 = 収束ゲート × taper(#8) × bulge(#8) × volume(#1) × pinch(#10) × straw(#1/#10)
                 // snap 中はゲートを (1-sw)^2 で先に絞り、頭がノズルに着く前にチューブをネックさせる。
                 float latGate = inSnap ? (1f - snapStart) * (1f - sw) * (1f - sw) : (1f - a);
                 float taper = Mathf.Lerp(1f, activeProfile.endThin, u0[i] * a);
                 float bulge = 1f + activeProfile.midBulge * Mathf.Sin(a * Mathf.PI);
                 float latVolume = activeProfile.volumePreserve > 0f ? Mathf.Pow(axialStretch, -activeProfile.volumePreserve) : 1f;
                 float pinch = 1f - activeProfile.vortexPinch * spin01; // 回転進捗に単調。[1-pinch,1]、a=0 で 1。
-                float latScale = latGate * taper * bulge * latVolume * pinch;
+                // ストロー感: 吸われ始めた頂点 (a>0) の断面を序盤 (a≈0.3) までに transitThin へ絞り、以降維持。
+                // a=0 で 1 なので identity 不変。ゲート (1-a) と違い移送中ずっと細いまま管を通る見た目になる。
+                float straw = activeProfile.transitThin < 1f
+                    ? Mathf.Lerp(1f, activeProfile.transitThin, Mathf.SmoothStep(0f, 1f, Mathf.Clamp01(a / 0.3f)))
+                    : 1f;
+                float latScale = latGate * taper * bulge * latVolume * pinch * straw;
 
                 // (H) lat0 を axis0 周りに angle 回転（lat0⊥axis0 なので 2 項 Rodrigues で厳密・Quaternion 不要）
                 Vector3 lat = lat0[i];

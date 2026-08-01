@@ -77,6 +77,12 @@ namespace Vacuum
         [Range(0f, 2f)]
         internal float midBulge = 0.4f;
 
+        [Tooltip("移送中の断面倍率 (#1/#10 ストロー感)。吸われ始めた頂点の断面を早期にこの倍率まで絞り、" +
+                 "細い管を通っているように移送する。1 で従来どおり（絞りなし）、小さいほど細いストロー。")]
+        [SerializeField]
+        [Range(0.05f, 1f)]
+        internal float transitThin = 1f;
+
         [Tooltip("垂れ/うねり（副動作・#7 弧）。重力方向へ弧を描く。終盤は渦に巻き込まれ消える。0 で直線。")]
         [SerializeField]
         [Range(0f, 0.5f)]
@@ -130,13 +136,18 @@ namespace Vacuum
 
         [Tooltip("螺旋の最大横半径（funnel 長比）。両端 0・中ほど最大の包絡。大きいほど大きく渦を巻く。0 で Curve と同じ。Spiral で有効。")]
         [SerializeField]
-        [Range(0f, 0.6f)]
+        [Range(0f, 1f)]
         internal float spiralRadius = 0.18f;
 
-        [Tooltip("螺旋包絡のノズル寄り偏り。0=対称、上げるほど渦の膨らみがノズル手前へ寄り排水口へ締まる感。両端 0 は維持。Spiral で有効。")]
+        [Tooltip("螺旋包絡の偏り。0=対称、正でノズル寄り（排水口へ締まる感）、負で根元寄り（大きく渦を巻いてから細い漏斗でノズルへ吸い込まれる竜巻シルエット）。両端 0 は維持。Spiral で有効。")]
+        [SerializeField]
+        [Range(-1f, 1f)]
+        internal float spiralTipBias = 0.5f;
+
+        [Tooltip("弧の持ち上げ（funnel 長比）。Bezier 制御点を world 上方向へ持ち上げ、山なりの放物線でノズルへ吸い込まれる。0 で従来どおり。Curve/Spiral で有効。")]
         [SerializeField]
         [Range(0f, 1f)]
-        internal float spiralTipBias = 0.5f;
+        internal float arcLift = 0f;
 
         [Header("Anticipation (#2)")]
         [Tooltip("予備動作リコイル (#2)。掴まれた瞬間ノズルと逆へ一度引いてから吸う。funnel 長比。0 で無し。")]
